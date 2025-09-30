@@ -11,16 +11,16 @@
    function updateTimeSince() { 
       if (message_timestamp != null) {
          const now = new Date()
-         const timeDiff = Math.floor((now.getTime() - message_timestamp.getTime()) / 1000)
+         const timeDiff = Math.floor((now.getTime() / 1000) - message_timestamp)
          
-         if (timeDiff < 60) {
+         if (timeDiff < 60 * 2) {
             timeSince = `just now`
-         } else if (timeDiff < 3600) {
+         } else if (timeDiff < 3600 * 2) {
             timeSince = `${Math.floor(timeDiff / 60)} minutes ago`
-         } else if (timeDiff < 86400) {
+         } else if (timeDiff < 86400 * 2) {
             timeSince = `${Math.floor(timeDiff / 3600)} hours ago`
          } else {
-            timeSince = message_timestamp.toLocaleDateString()
+            timeSince = `${Math.floor(timeDiff / 86400)} days ago`
          }
       } else {
          timeSince = ''

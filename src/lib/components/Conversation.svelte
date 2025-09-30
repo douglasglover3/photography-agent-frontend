@@ -1,6 +1,7 @@
 <script>
     import Message from '$lib/components/Message.svelte'; 
     export let messages = [];
+
 </script>
 <style> 
     .conversation {
@@ -12,6 +13,8 @@
 </style>
 <div class='conversation'>
     {#each messages as message}
-        <Message message_sender={message.sender} message_text={message.text} message_timestamp={message.timestamp}/>
+        {#if message.hidden != 1}
+            <Message message_sender={message.entity} message_text={message.message} message_timestamp={message.ts}/>
+        {/if}
     {/each}
 </div>
