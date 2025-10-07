@@ -14,7 +14,7 @@
 <div class='conversation'>
     {#each messages as message}
         {#if message.hidden != 1}
-            <Message message_sender={message.entity} message_text={message.message} message_timestamp={message.ts}/>
+            <Message message_sender={message.entity} message_text={message.message} message_images={message.images} message_timestamp={message.ts}/>
         {/if}
     {/each}
 </div>

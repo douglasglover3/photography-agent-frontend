@@ -8,13 +8,27 @@
     let conversation_list = []
     let scroll;
     let conversation_id = null;
+    let uploaded_images = [];
+    let fileinput;
+
+    const onFileSelected =(e)=>{
+        uploaded_images = []
+        let images = Array.from(e.target.files);
+        images.forEach(image => {
+            let reader = new FileReader();
+            reader.onload = e => {
+                uploaded_images = [...uploaded_images, e.target.result];
+            };
+            reader.readAsDataURL(image);
+        })
+    }
 
     onMount(async () => {
         getConversationsList()
         scrollToBottom()
     });
 
-    function  scrollToBottom() {
+    function scrollToBottom() {
         scroll.scroll({
             top: scroll.scrollHeight,
             behavior: 'smooth'
@@ -27,19 +41,20 @@
                 method: 'GET'
             });
             const myJson = await response.json();
-            console.log(myJson)
             conversation_list = myJson
         }
         catch (error) {
+            console.log("Server error: " + error)
             return "Server error: " + error
         }
     }
 
     const getLLMresponse = async () => {
         try {
+            let uploaded_images_base64 = uploaded_images.map(img => img.split(',')[1])
             const response = await fetch('http://127.0.0.1:8000/llm/conversation', {
                 method: 'POST',
-                body: JSON.stringify({conversation_id: conversation_id, prompt_text: prompt_input}),
+                body: JSON.stringify({conversation_id: conversation_id, prompt_text: prompt_input, images: uploaded_images_base64}),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -49,6 +64,7 @@
             return myJson
         }
         catch (error) {
+            console.log("Server error: " + error)
             return "Server error: " + error
         }
     }
@@ -59,6 +75,7 @@
             messages = [...messages, {entity: "User", message: prompt_input, ts: now}];
             await tick();
             scrollToBottom()
+
             let response = await getLLMresponse(prompt_input);
             if (conversation_id == null) {
                 getConversationsList()
@@ -66,6 +83,10 @@
             conversation_id = response["conversation_id"];
             messages = response["conversation"];
             prompt_input = '';
+            uploaded_images = []
+            if (fileinput) {
+                fileinput.value = '';
+            }
             await tick();
             scrollToBottom()
         }
@@ -73,11 +94,16 @@
     async function setConversation(new_conversation_id) {
         try {
             messages = []
+            uploaded_images = []
+            if (fileinput) {
+                fileinput.value = '';
+            }
             if (new_conversation_id != null) {
                 const response = await fetch('http://127.0.0.1:8000/llm/conversation?conversation_id=' + new_conversation_id, {
                     method: 'GET'
                 });
                 const myJson = await response.json();
+                console.log(myJson)
                 messages = myJson;
                 await tick();
                 scrollToBottom();
@@ -144,8 +170,25 @@
         max-height: 50vh;
     }
     .prompt-input {
+        display:flex;
         align-self: flex-end;
     }
+    .conversation-button{
+		display:flex;
+	    height:20px;
+		cursor:pointer;
+	}
+	.uploaded-image{
+		display:flex;
+		height:200px;
+		width:200px;
+	}
+    .images-list{
+		display:flex;
+        margin: 10px;
+        max-width: 100%;
+        overflow-x: scroll;
+	}
 </style>
 
 <div class='page'> 
@@ -165,10 +208,24 @@
             <div class='conversation-container' bind:this={scroll}>
                 <Conversation {messages} />
             </div>
-            <div class='prompt-input'> 
+            <div class='prompt-input' > 
                 <input type="text" id="Prompt Input" bind:value={prompt_input} on:keydown={handleKeydown}/>
-                <button on:click={sendPrompt}>Send</button>
+                <div>
+                    
+                    <button class="conversation-button" on:click={() => fileinput.click()}>
+                        <img src="https://static.thenounproject.com/png/625182-200.png" alt="Upload attachment"/>
+                    </button>
+                    <input style="display:none" type="file" multiple accept=".jpg, .jpeg, .png" on:change={(e)=>onFileSelected(e)} bind:this={fileinput} >
+                </div>
+                <button class="conversation-button" on:click={sendPrompt}>Send</button>
             </div> 
+            <div class='images-list' > 
+                {#if uploaded_images != []}
+                    {#each uploaded_images as uploaded_image}
+                        <img class="uploaded-image" src="{uploaded_image}" alt="Attachment" />
+                    {/each}
+                {/if}
+            </div>
         </div>
     </div>
 </div>

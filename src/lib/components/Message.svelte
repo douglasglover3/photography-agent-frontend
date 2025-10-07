@@ -3,6 +3,7 @@
    
    export let message_sender; 
    export let message_text; 
+   export let message_images; 
    export let message_timestamp;
    
    let timeSince = '';
@@ -66,15 +67,39 @@
       margin: 0.5rem 0; 
       color: #666; 
    } 
+   .message-image{
+		display:flex;
+		height:100px;
+		width:100px;
+	}
+   .images-list{
+		display:flex;
+      max-width: 100%;
+      overflow-x: auto;
+	}
 </style>
 {#if message_sender == "User"}
    <div class="right-message"> 
       <p class='message-content'>{message_text}</p> 
+      <div class='images-list' > 
+            {#if message_images != []}
+               {#each message_images as message_image}
+                  <img class="message-image" src="{"data:image/jpg;base64," + message_image.image}" alt="Attachment" />
+               {/each}
+            {/if}
+      </div>
       <p class='message-subtext'>{timeSince}</p> 
    </div>
 {:else}
    <div class="left-message"> 
       <p class='message-content'>{message_text}</p> 
+      <div class='images-list' > 
+            {#if message_images != []}
+               {#each message_images as message_image}
+                  <img class="message-image" src="{"data:image/jpg;base64," + message_image.image}" alt="Attachment" />
+               {/each}
+            {/if}
+      </div>
       <p class='message-subtext'>{timeSince}</p> 
    </div>
 {/if}

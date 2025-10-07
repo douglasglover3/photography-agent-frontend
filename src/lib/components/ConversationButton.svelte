@@ -27,7 +27,6 @@
    }
    
    onMount(() => {
-      console.log(conversation)
       updateTimeSince()
       interval = setInterval(updateTimeSince, 60000) // Update every minute
    })
