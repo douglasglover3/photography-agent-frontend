@@ -131,16 +131,18 @@
         padding: 40px;
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        height: 85vh;
     }
     .main-panel {
         width: 90%;
+        height: 100%;
         display: flex;
         justify-content: space-between;
         flex-direction: row;
     }
     .side-panel {
         width: 30%;
+        height: 100%;
         display: flex;
         flex-direction: column;
     }
@@ -149,10 +151,11 @@
         flex-direction: column;
         overflow-y: auto;
         min-height: 50vh;
-        max-height: 50vh;
+        max-height: 100vh;
     }
     .conversation-panel {
         width: 70%;
+        height: 100%;
         align-self: center;
         display: flex;
         flex-direction: column;
@@ -167,7 +170,7 @@
         margin-bottom: 1rem;
         background: #f9f9f9;
         min-height: 50vh;
-        max-height: 50vh;
+        max-height: 100vh;
     }
     .prompt-input {
         display:flex;
@@ -180,7 +183,6 @@
 	}
 	.uploaded-image{
 		display:flex;
-		height:200px;
 		width:200px;
 	}
     .images-list{

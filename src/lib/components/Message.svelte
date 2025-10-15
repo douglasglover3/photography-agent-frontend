@@ -69,7 +69,6 @@
    } 
    .message-image{
 		display:flex;
-		height:100px;
 		width:100px;
 	}
    .images-list{
