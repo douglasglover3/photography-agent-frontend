@@ -1,11 +1,23 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" style="
+--background-color: #bbd9ff;
+--theme-color: #006af5;
+--theme-color-light: #599cff;
+--theme-color-dark: #0043a8;
+--alt-theme-color: #009bf5;
+--alt-theme-color-light: #33b6ff;
+--alt-theme-color-dark: #007ac1;
+--text-color: #ffffff;
+--border-color: #003ab8;
+--alt-text-color: #cad8ff;
+--secondary-background-color: #e0eeff;
+background-color: var(--background-color);">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		%sveltekit.head%
 	</head>
-	<body data-sveltekit-preload-data="hover">
+	<body data-sveltekit-preload-data="hover" style="margin: 0px">
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>

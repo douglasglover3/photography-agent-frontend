@@ -40,7 +40,7 @@
 
 <style> 
    .left-message {
-      background-color: #8a9fff; 
+      background-color: var(--theme-color);
       border-radius: 8px; 
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       padding: 1rem; 
@@ -50,7 +50,7 @@
       align-self: flex-start;
    }
    .right-message {
-      background-color: #8ae8ff; 
+      background-color: var(--alt-theme-color);
       border-radius: 8px; 
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       padding: 1rem; 
@@ -61,11 +61,11 @@
    }
    .message-content { 
       margin: 0.5rem 0; 
-      color: #000000; 
+      color: var(--text-color);
    } 
    .message-subtext { 
       margin: 0.5rem 0; 
-      color: #666; 
+      color: var(--alt-text-color);
    } 
    .message-image{
 		display:flex;
@@ -76,6 +76,21 @@
       max-width: 100%;
       overflow-x: auto;
 	}
+   .images-list::-webkit-scrollbar {
+      height: 12px;
+   }
+   .images-list::-webkit-scrollbar-track {
+      background: var(--theme-color-dark);
+      border-radius: 8px;
+   }
+   .images-list::-webkit-scrollbar-thumb {
+      background: var(--theme-color);
+      border-radius: 8px;
+   }
+
+   .images-list::-webkit-scrollbar-thumb:hover {
+      background: var(--theme-color-light);
+   }
 </style>
 {#if message_sender == "User"}
    <div class="right-message"> 

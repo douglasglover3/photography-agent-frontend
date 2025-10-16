@@ -37,15 +37,35 @@
 </script>
 
 <style> 
+   .button {
+      background-color: var(--alt-theme-color);
+      border: none; 
+      color: var(--text-color);
+      padding: 10px; 
+      text-align: left; 
+      text-decoration: none; 
+      display: flex; 
+      flex-direction: column;
+      width: 100%;
+      cursor: pointer; 
+      border-radius: 8px; 
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 10px;
+      transition: background-color 0.3s ease;
+      
+   }
+   .button:hover {
+      background-color: var(--alt-theme-color-light);
+   }
    .conversation-message {
       align-self: flex-start;
    }
    .conversation-subtext { 
       margin: 0.5rem 0; 
-      color: #666; 
+      color: var(--alt-text-color);
    } 
 </style>
-<button on:click={() => setConversation(conversation["conversation_id"])}> 
+<button class="button" on:click={() => setConversation(conversation["conversation_id"])}> 
    <p class='conversation-message'>{conversation["title"]}</p> 
    <p class='conversation-subtext'>{timeSince}</p> 
 </button>
