@@ -78,7 +78,7 @@
         if (prompt_input != '') {
             let now = new Date().getTime() / 1000
             let message_images = uploaded_images.map(uploaded_image => ({ "image": uploaded_image.split(',')[1] }));
-            messages = [...messages, {entity: "User", message: prompt_input, images: message_images, ts: now}];
+            messages = [...messages, {entity: "user", message: prompt_input, images: message_images, ts: now}];
             await tick();
             scrollToBottom()
 

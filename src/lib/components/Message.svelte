@@ -92,7 +92,7 @@
       background: var(--theme-color-light);
    }
 </style>
-{#if message_sender == "User"}
+{#if message_sender == "user"}
    <div class="right-message"> 
       <p class='message-content'>{message_text}</p> 
       <div class='images-list' > 
