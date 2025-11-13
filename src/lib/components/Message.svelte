@@ -8,6 +8,7 @@
    
    let timeSince = '';
    let interval;
+   let expandedImage = null;
    
    function updateTimeSince() { 
       if (message_timestamp != null) {
@@ -28,13 +29,38 @@
       }
    }
    
+   function expandImage(image) {
+      expandedImage = image;
+      document.body.style.overflow = 'hidden';
+   }
+   
+   function closeImage() {
+      expandedImage = null;
+      document.body.style.overflow = 'auto';
+   }
+   
+   function handleKeydown(event) {
+      if (event.key === 'Escape' && expandedImage) {
+         closeImage();
+      }
+   }
+   
+   function handleModalClick(event) {
+      if (event.target.classList.contains('modal-overlay')) {
+         closeImage();
+      }
+   }
+   
    onMount(() => {
       updateTimeSince()
-      interval = setInterval(updateTimeSince, 60000) // Update every minute
+      interval = setInterval(updateTimeSince, 60000)
+      window.addEventListener('keydown', handleKeydown);
    })
    
    onDestroy(() => {
       if (interval) clearInterval(interval)
+      window.removeEventListener('keydown', handleKeydown);
+      document.body.style.overflow = 'auto';
    })
 </script>
 
@@ -67,15 +93,22 @@
       margin: 0.5rem 0; 
       color: var(--alt-text-color);
    } 
-   .message-image{
-		display:flex;
-		width:100px;
-	}
-   .images-list{
-		display:flex;
+   .message-image {
+      display: flex;
+      width: 100px;
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+      border-radius: 4px;
+   }
+   .message-image:hover {
+      opacity: 0.8;
+   }
+   .images-list {
+      display: flex;
       max-width: 100%;
       overflow-x: auto;
-	}
+      gap: 8px;
+   }
    .images-list::-webkit-scrollbar {
       height: 12px;
    }
@@ -87,33 +120,114 @@
       background: var(--theme-color);
       border-radius: 8px;
    }
-
    .images-list::-webkit-scrollbar-thumb:hover {
       background: var(--theme-color-light);
    }
+   
+   .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      cursor: pointer;
+   }
+   
+   .modal-content {
+      max-width: 90vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+   }
+   
+   .modal-image {
+      max-width: 100%;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 8px;
+      cursor: default;
+   }
+   
+   .close-button {
+      background-color: var(--theme-color);
+      color: var(--text-color);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.2s ease;
+   }
+   
+   .close-button:hover {
+      background-color: var(--theme-color-light);
+   }
 </style>
+
 {#if message_sender == "user"}
    <div class="right-message"> 
       <p class='message-content'>{message_text}</p> 
-      <div class='images-list' > 
-            {#if message_images != []}
-               {#each message_images as message_image}
-                  <img class="message-image" src="{"data:image/jpg;base64," + message_image.image}" alt="Attachment" />
-               {/each}
-            {/if}
+      <div class='images-list'> 
+         {#if message_images != []}
+            {#each message_images as message_image}
+               <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+               <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+               <img 
+                  class="message-image" 
+                  src="data:image/jpg;base64,{message_image.image}" 
+                  alt="Attachment (click to expand)"
+                  on:click={() => expandImage(message_image.image)}
+                  on:keydown={(e) => e.key === 'Enter' && expandImage(message_image.image)}
+                  tabindex="0"
+               />
+            {/each}
+         {/if}
       </div>
       <p class='message-subtext'>{timeSince}</p> 
    </div>
 {:else}
    <div class="left-message"> 
       <p class='message-content'>{message_text}</p> 
-      <div class='images-list' > 
-            {#if message_images != []}
-               {#each message_images as message_image}
-                  <img class="message-image" src="{"data:image/jpg;base64," + message_image.image}" alt="Attachment" />
-               {/each}
-            {/if}
+      <div class='images-list'> 
+         {#if message_images != []}
+            {#each message_images as message_image}
+               <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+               <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+               <img 
+                  class="message-image" 
+                  src="data:image/jpg;base64,{message_image.image}" 
+                  alt="Attachment (click to expand)"
+                  on:click={() => expandImage(message_image.image)}
+                  on:keydown={(e) => e.key === 'Enter' && expandImage(message_image.image)}
+                  tabindex="0"
+               />
+            {/each}
+         {/if}
       </div>
       <p class='message-subtext'>{timeSince}</p> 
+   </div>
+{/if}
+
+{#if expandedImage}
+   <!-- svelte-ignore a11y_interactive_supports_focus -->
+   <!-- svelte-ignore a11y_click_events_have_key_events -->
+   <div class="modal-overlay" on:click={handleModalClick} role="dialog" aria-modal="true">
+      <div class="modal-content">
+         <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+         <img 
+            class="modal-image" 
+            src="data:image/jpg;base64,{expandedImage}" 
+            alt="Expanded view"
+            on:click={(e) => e.stopPropagation()}
+         />
+         <button class="close-button" on:click={closeImage}>Close</button>
+      </div>
    </div>
 {/if}
