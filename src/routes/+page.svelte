@@ -4,6 +4,7 @@
     import Conversation from '$lib/components/Conversation.svelte';
     import ConversationButton from '$lib/components/ConversationButton.svelte';
     import ImageIcon from "$lib/assets/image_icon.png"
+    
     let prompt_input = ''; 
     let messages = [];
     let conversation_list = []
@@ -11,6 +12,7 @@
     let conversation_id = null;
     let uploaded_images = [];
     let fileinput;
+    const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
     const onFileSelected =(e)=>{
         uploaded_images = []
@@ -38,7 +40,7 @@
 
     const getConversationsList = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/llm/conversations', {
+            const response = await fetch(API_URL + '/llm/conversations', {
                 method: 'GET'
             });
             const myJson = await response.json();
@@ -57,7 +59,7 @@
             prompt_input = '';
             uploaded_images = []
             let llm_images_base64 = llm_images.map(img => img.split(',')[1])
-            const response = await fetch('http://127.0.0.1:8000/llm/conversation', {
+            const response = await fetch(API_URL + '/llm/conversation', {
                 method: 'POST',
                 body: JSON.stringify({conversation_id: conversation_id, prompt_text: llm_prompt, images: llm_images_base64}),
                 headers: {
@@ -105,7 +107,7 @@
                 fileinput.value = '';
             }
             if (new_conversation_id != null) {
-                const response = await fetch('http://127.0.0.1:8000/llm/conversation?conversation_id=' + new_conversation_id, {
+                const response = await fetch(API_URL + '/llm/conversation?conversation_id=' + new_conversation_id, {
                     method: 'GET'
                 });
                 const myJson = await response.json();
