@@ -3,7 +3,8 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [sveltekit()],
-	server: {
-		port: 8000
+	base: '/photography-agent-frontend/',
+	build: {
+		outDir: 'build'
 	}
 });

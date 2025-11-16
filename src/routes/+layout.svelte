@@ -4,6 +4,7 @@
 	let { children } = $props();
 </script>
 
+
 <svelte:head>
 	<link rel="icon" href={CameraIcon} />
 	<title>Photography Agent</title>
