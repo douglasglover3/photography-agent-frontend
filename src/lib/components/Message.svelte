@@ -95,7 +95,7 @@
    } 
    .message-image {
       display: flex;
-      width: 100px;
+      height: 100px;
       cursor: pointer;
       transition: opacity 0.2s ease;
       border-radius: 4px;
@@ -105,9 +105,9 @@
    }
    .images-list {
       display: flex;
-      max-width: 100%;
       overflow-x: auto;
       gap: 8px;
+      align-items: center;
    }
    .images-list::-webkit-scrollbar {
       height: 12px;

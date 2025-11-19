@@ -12,6 +12,8 @@
     let conversation_id = null;
     let uploaded_images = [];
     let fileinput;
+    let isLoadingConversation = false;
+    let isWaitingForLLM = false;
     const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
 
     const onFileSelected =(e)=>{
@@ -81,6 +83,7 @@
             let now = new Date().getTime() / 1000
             let message_images = uploaded_images.map(uploaded_image => ({ "image": uploaded_image.split(',')[1] }));
             messages = [...messages, {entity: "user", message: prompt_input, images: message_images, ts: now}];
+            isWaitingForLLM = true;
             await tick();
             scrollToBottom()
 
@@ -95,12 +98,14 @@
             if (fileinput) {
                 fileinput.value = '';
             }
+            isWaitingForLLM = false;
             await tick();
             scrollToBottom()
         }
     } 
     async function setConversation(new_conversation_id) {
         try {
+            isLoadingConversation = true;
             messages = []
             uploaded_images = []
             if (fileinput) {
@@ -120,6 +125,9 @@
         }
         catch (error) {
             return "Server error: " + error
+        }
+        finally {
+            isLoadingConversation = false;
         }
     }
 
@@ -148,7 +156,7 @@
     .side-panel {
         width: 30%;
         max-width: 300px;
-        margin: 20px;
+        margin-inline: 20px;
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -192,6 +200,7 @@
         background: var(--secondary-background-color);
         min-height: 50vh;
         max-height: 100vh;
+        position: relative;
     }
     .conversation-container::-webkit-scrollbar {
         height: 12px;
@@ -240,13 +249,15 @@
     }
 	.uploaded-image{
 		display:flex;
-		width:200px;
+		height: 200px;
+        width: auto;
 	}
     .images-list{
 		display:flex;
         margin: 10px;
         max-width: 100%;
         overflow-x: auto;
+        align-items: center;
 	}
     .images-list::-webkit-scrollbar {
         height: 12px;
@@ -271,10 +282,36 @@
         border-radius: 5px;
         cursor: pointer;
         margin-top: 10px;
-        margin-inline: 10px;
     }
     .primary-button:hover{
         background-color: var(--theme-color-light);
+    }
+    
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+        z-index: 10;
+    }
+    
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 5px solid var(--theme-color-dark);
+        border-top: 5px solid var(--theme-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 </style>
 
@@ -287,12 +324,19 @@
                 {/each}
             </div>
             <button class='primary-button' on:click={() => setConversation(null)}> 
-                <p class='conversation-message'>{"New Conversation"}</p> 
+                <p>{"New Conversation"}</p> 
             </button>
         </div>
         <div class='conversation-panel'>
             <div class='conversation-container' bind:this={scroll}>
-                <Conversation {messages} />
+                {#if isLoadingConversation}
+                    <div class='loading-overlay'>
+                        <div class='spinner'></div>
+                    </div>
+                {:else}
+                    <Conversation {messages} {isWaitingForLLM} />
+                {/if}
+                
             </div>
             <div class='prompt-input-panel' > 
                 <input class='prompt-input' type="text" id="Prompt Input" bind:value={prompt_input} on:keydown={handleKeydown}/>
@@ -315,4 +359,3 @@
         </div>
     </div>
 </div>
-
