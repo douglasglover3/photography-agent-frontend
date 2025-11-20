@@ -11,6 +11,19 @@
         display: flex;
         flex-direction: column;
     }
+
+    .loading-message {
+        background-color: var(--theme-color);
+        border-radius: 8px; 
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 1rem; 
+        margin-bottom: 1rem; 
+        width: 60%;
+        align-self: flex-start;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
         
     .loading-dots {
         display: flex;
