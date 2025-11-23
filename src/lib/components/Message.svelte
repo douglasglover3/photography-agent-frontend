@@ -88,6 +88,8 @@
    .message-content { 
       margin: 0.5rem 0; 
       color: var(--text-color);
+      white-space: pre-wrap;
+      word-wrap: break-word;
    } 
    .message-subtext { 
       margin: 0.5rem 0; 
