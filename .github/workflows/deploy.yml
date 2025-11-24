@@ -27,7 +27,7 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_API_URL: https://skaqat6wkfj04t-8000.proxy.runpod.net
+          VITE_API_URL: https://sphvyhofabg79g-8000.proxy.runpod.net
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
